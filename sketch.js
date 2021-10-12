@@ -1,0 +1,94 @@
+let FORM =1;
+let PLAY = 2;
+let END = 0;
+let gameSate = FORM; 
+let start;
+let end;
+let spaceShip;
+let lazer , weapons;
+let bar;
+let skrull,invaders;
+let lives = 5;
+let kills = 0;
+function setup() {
+  createCanvas(800,400);
+  spaceShip = createSprite(100, 200, 10, 10);
+  start = createSprite(400,250,30,30);
+  end = createSprite(400,200,20,20);
+  bar = createSprite(2,200,5,400);
+  invaders = new Group();
+  weapons = new Group();
+  lives =5;
+  kills =0;
+}
+function draw() {
+  background('black');
+  fill('red');
+  if(gameSate===FORM){
+    text('your Mission : destroy all incoming enemy troop carriers',250,150);
+    spaceShip.visible = false;
+    start.vivible = true;
+    end.visible = false;
+    if(mousePressedOver(start)){
+      gameSate = PLAY;
+    }
+  }
+  if(gameSate===PLAY){
+  text('lives left: '+ lives,250,370);
+  text('kills: '+kills,350,370 );
+  spaceShip.visible = true;
+  start.visible = false;
+  end.visible = false;
+  if(keyWentDown('SPACE')){
+   lazer = createSprite(spaceShip.x,spaceShip.y,20,5);
+   lazer.velocityX = 20;
+   lazer.lifetime = 35;
+   weapons.add(lazer);
+  }  
+  if(keyDown('W') && spaceShip.y > 10){
+   spaceShip.y -=15;
+  }
+  if(keyDown('S') && spaceShip.y <390){
+   spaceShip.y +=15;
+  }
+  if(keyDown('A') && spaceShip.x > 10){
+   spaceShip.x -= 15;
+  }
+  if(keyDown('D') && spaceShip.x < 390){
+   spaceShip.x +=15;
+  }
+  if (frameCount % 35 === 0) {
+   skrull = createSprite(750,200,30,30);
+   skrull.y = Math.round(random(1,350));
+   skrull.velocityX = -7;
+   skrull.lifetime = 250;
+   invaders.add(skrull);
+  }
+  if(invaders.isTouching(bar)){
+   lives-=1; 
+  }
+  if(invaders.isTouching(weapons)){
+   kills+=1;
+  }  
+  if(lives<0){
+    gameSate = END;
+  }
+ }
+ if(gameSate===END){
+  spaceShip.visible = false;
+  end.visible = true;
+  text('Mission failed: too many ships crosed the borders',250,150);
+  fill('blue');
+  text('press button to restart',250,200);
+  if(mousePressedOver(end)){
+    reset();
+  }
+ }
+  drawSprites();
+}
+function reset(){
+  gameSate = PLAY;
+  end.visible = false;
+  lives = 5;
+  kills = 0;
+}
